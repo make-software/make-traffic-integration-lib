@@ -2,7 +2,7 @@
 
 This example demonstrates how to use the [
 `make-traffic-integration-core`](https://www.npmjs.com/package/make-traffic-integration-core)
-and [`make-traffic-integration-react-wrapper`] (https://www.npmjs.com/package/make-traffic-integration-react-wrapper)
+and [`make-traffic-integration-react-wrapper`](https://www.npmjs.com/package/make-traffic-integration-react-wrapper)
 libraries in a React component.
 
 Check the [React Example](./src/App.tsx) for the complete code.
