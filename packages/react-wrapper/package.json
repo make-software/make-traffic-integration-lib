@@ -1,0 +1,40 @@
+{
+  "name": "make-traffic-integration-react-wrapper",
+  "version": "0.0.12",
+  "scripts": {
+    "build": "webpack"
+  },
+  "exports": {
+    ".": "./dist/bundle.esm.js"
+  },
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "peerDependencies": {
+    "react": ">=16.0.0",
+    "react-dom": ">=16.0.0"
+  },
+  "dependencies": {
+    "make-traffic-integration-core": "^0.0.7",
+    "react": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "@types/react": "^18.3.1",
+    "babel-loader": "^10.0.0",
+    "ts-loader": "^9.5.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
