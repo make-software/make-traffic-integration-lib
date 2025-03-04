@@ -53,6 +53,36 @@ taskManager.getCampaigns('user123').then(campaigns => {
 
 Check [React Example](./examples/react-app/README.md)
 
+#### Code Example
+
+```tsx
+import React from "react";
+import { TaskManagerProvider } from "make-traffic-integration-react-wrapper";
+import {TaskManagerApp} from "make-traffic-integration-core";
+
+const taskManagerApp = TaskManagerApp({
+    apiUrl: "https://api.example.com",
+    appKey: "your-app-key",
+});
+
+const MyCustomTemplate = (campaign, actions) => (
+    <div>
+        <h3>{campaign.name}</h3>
+        <button onClick={actions.go}>Go</button>
+        <button onClick={actions.claim}>Claim</button>
+    </div>
+);
+
+const App = () => (
+    <TaskManagerProvider
+        taskManagerApp={taskManagerApp}
+        userID="user123"
+        template={MyCustomTemplate}
+    />
+);
+
+export default App;
+```
 
 ## Core Methods
 
