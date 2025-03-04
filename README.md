@@ -26,8 +26,8 @@ const appConfig = {
     appKey: '<!--YourAppKey-->',
 };
 
-const makeTrafficApp = new TaskManagerApp(appConfig);
-taskManagerApp.init(); // Initialize the library
+const taskManager = new TaskManagerApp(appConfig);
+taskManager.init(); // Initialize the library
 ```
 
 ---
