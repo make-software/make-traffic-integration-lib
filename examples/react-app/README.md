@@ -7,7 +7,7 @@ libraries in a React component.
 
 Check the [React Example](./src/App.tsx) for the complete code.
 
-Run the example:
+Run the example on localhost:
 
 ```bash
 git clone git@github.com:koltsov-iv/make-traffic-integration-lib.git
@@ -16,8 +16,10 @@ cd make-traffic-integration-lib/examples/react-app
 
 npm install
 
-npm start
+env PORT=3033 npm start
 ```
+
+Replace the PORT value with the desired port number from your Traffic source settings.
 
 Replace the `<!--YourAppKey-->` placeholder in the `appConfig` object with your application key
 from [Make Traffic console](https://make-traffic-console.dev.make.services/).
