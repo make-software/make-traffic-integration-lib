@@ -6,8 +6,6 @@ import {TaskProcessor} from "./services/TaskProcessor";
 import {Campaign, CampaignList, Events} from "./types";
 import {PluginsManager} from "./services/PluginsManager";
 
-export let TaskManager: any;
-
 export class TaskManagerApp {
     private readonly pluginsManager: PluginsManager;
     private readonly httpClient: HttpClient;
@@ -22,9 +20,7 @@ export class TaskManagerApp {
     }
 
     init = async () => {
-        return this.pluginsManager.initPluginScripts().then(() => {
-            TaskManager = this
-        });
+        return this.pluginsManager.initPluginScripts()
     }
 
     getCampaigns = async (userID: string): Promise<CampaignList> => {
@@ -48,19 +44,4 @@ export class TaskManagerApp {
     }
 }
 
-let instance: TaskManagerApp | null = null;
-
-// Singleton Instance API
-export const initTaskManager = (cfg: Config) => {
-    if (!instance) {
-        instance = new TaskManagerApp(cfg);
-    }
-    return instance.init();
-};
-
-export const getTaskManager = (): TaskManagerApp => {
-    if (!instance) {
-        throw new Error("TaskManagerApp is not initialized. Call initTaskManager() first.");
-    }
-    return instance;
-};
+export const app = (cfg: Config) => new TaskManagerApp(cfg);

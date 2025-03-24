@@ -11,23 +11,20 @@ npm install make-traffic-integration-core
 
 ## Usage
 ```typescript
-import {TaskManagerApp, initTaskManager, getTaskManager} from "make-traffic-integration-core";
+import {TaskManagerApp} from "make-traffic-integration-core";
+
 
 const config = {
     apiUrl: 'https://api.example.com',
     appKey: 'your-app-key'
 };
 
-await initTaskManager(config);
+const taskManager = TaskManagerApp(config);
 
-const taskMagnager = getTaskManager()
-
-taskMagnager.getCampaigns("user-id").then(campaigns => {
-    console.log(campaigns);
-});
+await taskManager.init();
 ```
 
-## Methods of TaskManagerApp
+## Methods
 
 ### `async init(): Promise<void>`
 Initializes the task manager. Should be run once before using other methods.
