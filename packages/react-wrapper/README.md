@@ -17,12 +17,18 @@ npm install make-traffic-integration-react-wrapper
 ```tsx
 import React from "react";
 import { TaskManagerProvider } from "make-traffic-integration-react-wrapper";
-import {TaskManagerApp} from "make-traffic-integration-core";
+import {TaskManagerApp, initTaskManager, getTaskManager} from "make-traffic-integration-core";
 
-const taskManagerApp = TaskManagerApp({
-    apiUrl: "https://api.example.com",
-    appKey: "your-app-key",
-});
+
+const config = {
+    apiUrl: 'https://console-api.maketraffic.io',
+    appKey: 'your-app-key'
+};
+
+initTaskManager(config).then(
+    () => console.log('Task manager initialized'),
+    (error) => console.error('Failed to initialize task manager', error)
+);
 
 const MyCustomTemplate = (campaign, actions) => (
     <div>
@@ -32,13 +38,16 @@ const MyCustomTemplate = (campaign, actions) => (
     </div>
 );
 
-const App = () => (
-    <TaskManagerProvider
-        taskManagerApp={taskManagerApp}
-        userID="user123"
-        template={MyCustomTemplate}
-    />
-);
+const App = () => {
+    const taskMagnager = getTaskManager()
+    
+    return (
+        <TaskManagerProvider
+            userID="user123"
+            template={MyCustomTemplate}
+        />
+    );
+}
 
 export default App;
 ```
