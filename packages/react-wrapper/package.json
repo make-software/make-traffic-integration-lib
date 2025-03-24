@@ -1,6 +1,6 @@
 {
   "name": "make-traffic-integration-react-wrapper",
-  "version": "0.0.15",
+  "version": "0.0.12",
   "scripts": {
     "build": "webpack"
   },
@@ -14,7 +14,7 @@
     "react-dom": ">=16.0.0"
   },
   "dependencies": {
-    "make-traffic-integration-core": "^0.0.10",
+    "make-traffic-integration-core": "^0.0.7",
     "react": ">=16.0.0"
   },
   "devDependencies": {

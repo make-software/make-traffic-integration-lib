@@ -1,12 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {DefaultTaskCard} from "./DefaultTaskTemplate";
 import {
     Campaign,
-    CampaignList, getTaskManager,
+    CampaignList, Events,
     TaskManagerApp,
 } from "make-traffic-integration-core";
 
 interface TaskManagerProviderProps {
+    taskManagerApp: TaskManagerApp;
     userID: string;
     className?: string;
     filterCampaigns?: (campaign: Campaign) => boolean;
@@ -15,6 +16,7 @@ interface TaskManagerProviderProps {
 
 export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
     {
+        taskManagerApp,
         userID,
         className,
         filterCampaigns,
@@ -22,20 +24,8 @@ export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
     }: TaskManagerProviderProps
 ) => {
     const [campaigns, setCampaigns] = useState<CampaignList>([]);
-    const [taskManagerApp, setTaskManager] = useState<TaskManagerApp|null>(null);
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    useEffect(() => {
-        const manager = getTaskManager();
-        if (manager) {
-            setTaskManager(manager);
-        } else {
-            console.error("Task Manager is not initialized");
-        }
-    }, []);
-
-    if (!taskManagerApp) {
-        return <p>Loading...</p>; // Wait until TaskManager is available
-    }
 
     const refreshTasks = () => {
         taskManagerApp.getCampaigns(userID).then((campaignList: CampaignList) => {
@@ -43,10 +33,21 @@ export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
         });
     };
 
+    // Register event listeners and initialize task manager app
+    useEffect(() => {
+        taskManagerApp.init().then(() => {
+            setIsInitialized(true);
+        }).catch((error) => {
+            console.error("Failed to initialize Task Manager App", error);
+        });
+    }, []);
+
     // Fetch campaigns after initialization
     useEffect(() => {
+        if (!isInitialized) return;
         refreshTasks();
-    }, [userID]);
+
+    }, [isInitialized, userID]);
 
     const handleGoProcess = async (campaign: Campaign) => {
         return taskManagerApp.goProcess(userID, campaign);

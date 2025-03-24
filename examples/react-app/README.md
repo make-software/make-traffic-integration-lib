@@ -29,17 +29,12 @@ from [Make Traffic console](https://make-traffic-console.dev.make.services/).
 ```tsx
 import React from "react";
 import { TaskManagerProvider } from "make-traffic-integration-react-wrapper";
-import {Campaign, Events, initTaskManager, getTaskManager} from "make-traffic-integration-core";
+import {TaskManagerApp} from "make-traffic-integration-core";
 
-const config = {
-    apiUrl: 'https://console-api.maketraffic.io',
-    appKey: 'your-app-key'
-};
-
-initTaskManager(config).then(
-    () => console.log('Task manager initialized'),
-    (error) => console.error('Failed to initialize task manager', error)
-);
+const taskManagerApp = TaskManagerApp({
+    apiUrl: "https://api.example.com",
+    appKey: "your-app-key",
+});
 
 const MyCustomTemplate = (campaign, actions) => (
     <div>
@@ -51,6 +46,7 @@ const MyCustomTemplate = (campaign, actions) => (
 
 const App = () => (
     <TaskManagerProvider
+        taskManagerApp={taskManagerApp}
         userID="user123"
         template={MyCustomTemplate}
     />

@@ -19,28 +19,35 @@ npm install make-traffic-integration-core
 To use the library, initialize the `TaskManagerApp` instance with your app's configuration:
 
 ```javascript
-import {getTaskManager, initTaskManager, Events} from "make-traffic-integration-core";
+import {TaskManagerApp, initTaskManager, getTaskManager} from "make-traffic-integration-core";
 
-initTaskManager({
+const config = {
     apiUrl: 'https://api.example.com',
     appKey: 'your-app-key'
-}).then(
-    () => {
-        const taskMagnager = getTaskManager()
+};
 
-        const onCampaignClaimed = (task: Campaign) => {
-            console.log('Campaign claimed:', task);
-        };
+await initTaskManager(config);
 
-        taskManager.subscribe(Events.CampaignClaimSucceed, onCampaignClaimed);
+const taskMagnager = getTaskManager()
 
-        taskManager.getCampaigns('user123').then(campaigns => {
-            console.log('Campaigns:', campaigns);
-        });       
-    },
-    (error) => console.error('Failed to initialize task manager', error)
-)
+taskMagnager.getCampaigns("user-id").then(campaigns => {
+    console.log(campaigns);
+});
+```
 
+---
+
+### Example
+```typescript
+const onCampaignClaimed = (task: Campaign) => {
+    console.log('Campaign claimed:', task);
+};
+
+taskManager.subscribe(Events.CampaignClaimSucceed, onCampaignClaimed);
+
+taskManager.getCampaigns('user123').then(campaigns => {
+    console.log('Campaigns:', campaigns);
+});
 ```
 
 
@@ -55,13 +62,17 @@ Check [React Example](./examples/react-app/README.md)
 
 ```tsx
 import React from "react";
-import {TaskManagerProvider} from "make-traffic-integration-react-wrapper";
-import {initTaskManager} from "make-traffic-integration-core";
+import { TaskManagerProvider } from "make-traffic-integration-react-wrapper";
+import {TaskManagerApp} from "make-traffic-integration-core";
 
-initTaskManager({
+onst config = {
     apiUrl: 'https://api.example.com',
     appKey: 'your-app-key'
-});
+};
+
+await initTaskManager(config);
+
+const taskMagnager = getTaskManager()
 
 const MyCustomTemplate = (campaign, actions) => (
     <div>
@@ -73,6 +84,7 @@ const MyCustomTemplate = (campaign, actions) => (
 
 const App = () => (
     <TaskManagerProvider
+        taskManagerApp={taskMagnager}
         userID="user123"
         template={MyCustomTemplate}
     />
