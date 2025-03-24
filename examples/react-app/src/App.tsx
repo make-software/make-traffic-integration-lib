@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Campaign, Events, getTaskManager} from "make-traffic-integration-core";
 import {TaskManagerProvider} from "make-traffic-integration-react-wrapper";
 
