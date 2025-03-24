@@ -19,15 +19,20 @@ npm install make-traffic-integration-core
 To use the library, initialize the `TaskManagerApp` instance with your app's configuration:
 
 ```javascript
-import { TaskManagerApp } from "npm install make-traffic-integration-core";
+import {TaskManagerApp, initTaskManager, getTaskManager} from "make-traffic-integration-core";
 
-const appConfig = {
-    apiUrl: 'https://make-traffic-integration.dev.make.services',
-    appKey: '<!--YourAppKey-->',
+const config = {
+    apiUrl: 'https://api.example.com',
+    appKey: 'your-app-key'
 };
 
-const taskManager = new TaskManagerApp(appConfig);
-taskManager.init(); // Initialize the library
+await initTaskManager(config);
+
+const taskMagnager = getTaskManager()
+
+taskMagnager.getCampaigns("user-id").then(campaigns => {
+    console.log(campaigns);
+});
 ```
 
 ---
@@ -60,10 +65,14 @@ import React from "react";
 import { TaskManagerProvider } from "make-traffic-integration-react-wrapper";
 import {TaskManagerApp} from "make-traffic-integration-core";
 
-const taskManagerApp = TaskManagerApp({
-    apiUrl: "https://api.example.com",
-    appKey: "your-app-key",
-});
+onst config = {
+    apiUrl: 'https://api.example.com',
+    appKey: 'your-app-key'
+};
+
+await initTaskManager(config);
+
+const taskMagnager = getTaskManager()
 
 const MyCustomTemplate = (campaign, actions) => (
     <div>
@@ -75,7 +84,7 @@ const MyCustomTemplate = (campaign, actions) => (
 
 const App = () => (
     <TaskManagerProvider
-        taskManagerApp={taskManagerApp}
+        taskManagerApp={taskMagnager}
         userID="user123"
         template={MyCustomTemplate}
     />
