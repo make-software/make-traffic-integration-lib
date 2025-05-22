@@ -24,9 +24,9 @@ export class TaskProcessor {
             if (err.name === 'HttpError') {
                 if (err.statusCode === 409) {
                     this.eventRegister.emit(Events.TaskClaimFailed, campaign)
-                    return
                 }
             }
+            return Promise.reject(err)
         })
     }
 }

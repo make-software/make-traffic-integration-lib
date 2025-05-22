@@ -7,6 +7,7 @@ export interface Task {
     id: string
     name: string
     description: string
+    customMetadata: object | null
     icon: string
     pluginID: number
 }

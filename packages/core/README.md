@@ -19,7 +19,7 @@ const config = {
     appKey: 'your-app-key'
 };
 
-const taskManager = TaskManagerApp(config);
+const taskManager = new TaskManagerApp(config);
 
 await taskManager.init();
 ```

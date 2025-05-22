@@ -19,7 +19,7 @@ npm install make-traffic-integration-core
 To use the library, initialize the `TaskManagerApp` instance with your app's configuration:
 
 ```javascript
-import { TaskManagerApp } from "npm install make-traffic-integration-core";
+import { TaskManagerApp } from "make-traffic-integration-core";
 
 const appConfig = {
     apiUrl: 'https://make-traffic-integration.dev.make.services',

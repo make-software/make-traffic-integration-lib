@@ -38,6 +38,17 @@ export class HttpClient {
 
     claimProcess = async (userID: string, campaign: Campaign) => {
         const response = await fetch(`${this.apiUrl}/action/claim?campaign_id=${campaign.id}&user_id=${userID}&app_key=${this.appKey}`)
+        if (!response.ok && response.status === 409) {
+            try {
+                const json = await response.json();
+                if (json && json.error.message) {
+                    return Promise.reject(new HttpError(json.error.message, response.status))
+                }
+            } catch (e) {
+                // Ignore JSON parse error
+            }
+            return Promise.reject(new HttpError(`Failed to process claim ${response.statusText}`, response.status))
+        }
         if (!response.ok) {
             return Promise.reject(new HttpError(`Failed to process claim ${response.statusText}`, response.status))
         }
