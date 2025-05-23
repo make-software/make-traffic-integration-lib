@@ -8,17 +8,30 @@ export interface Task {
     name: string
     description: string
     customMetadata: object | null
-    icon: string
     pluginID: number
+    pluginMetadata: object | null
 }
+
+export interface CampaignUserState {
+    isCompleted: boolean;
+    isClaimAvailable: boolean;
+    isRewarded: boolean;
+    isStarted: boolean;
+    startedAt: string | null;
+    pluginStateData: any;
+}
+
 export interface Campaign {
     id: string
+    title: string
+    category: string
+    dealType: string
+    priority: number
     task: Task
     settings: {
         rewards: TaskReward[]
     }
-    isClaimAvailable?: boolean
-    isCompleted?: boolean
+    userState: CampaignUserState
 }
 
 export type CampaignList = Campaign[]

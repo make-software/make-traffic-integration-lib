@@ -1,6 +1,6 @@
 {
   "name": "make-traffic-integration-core",
-  "version": "0.0.16",
+  "version": "0.0.18",
   "description": "Core Library for Make Traffic task manager",
   "scripts": {
     "build": "webpack"
