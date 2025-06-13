@@ -1,4 +1,4 @@
-import {Campaign, CampaignList, Plugin} from "../types";
+import {Task, TasksList, Plugin} from "../types";
 
 export class HttpError extends Error {
     constructor(message: string, public statusCode: number) {
@@ -11,8 +11,8 @@ export class HttpClient {
     constructor(private apiUrl: string, private appKey: string) {
     }
 
-    getCampaigns = async (userID: string): Promise<CampaignList> => {
-        const response = await fetch(this.apiUrl + `/campaigns?app_key=${this.appKey}&user_id=${userID}`);
+    getTasks = async (userID: string): Promise<TasksList> => {
+        const response = await fetch(this.apiUrl + `/tasks?app_key=${this.appKey}&user_id=${userID}`);
         if (!response.ok) {
             return Promise.reject(new HttpError(`Failed to get list of campaigns: ${response.statusText}`, response.status));
         }
@@ -36,8 +36,8 @@ export class HttpClient {
         }
     }
 
-    claimProcess = async (userID: string, campaign: Campaign) => {
-        const response = await fetch(`${this.apiUrl}/action/claim?campaign_id=${campaign.id}&user_id=${userID}&app_key=${this.appKey}`)
+    claimProcess = async (userID: string, task: Task) => {
+        const response = await fetch(`${this.apiUrl}/action/claim?task_id=${task.id}&user_id=${userID}&app_key=${this.appKey}`)
         if (!response.ok && response.status === 409) {
             try {
                 const json = await response.json();

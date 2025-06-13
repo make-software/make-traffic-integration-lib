@@ -3,7 +3,7 @@ import {Config} from "./types";
 import {HttpClient} from "./services/HttpClient";
 import {EventRegister} from "./services/EventRegister";
 import {TaskProcessor} from "./services/TaskProcessor";
-import {Campaign, CampaignList, Events} from "./types";
+import {Task, TasksList, Events} from "./types";
 import {PluginsManager} from "./services/PluginsManager";
 
 export class TaskManagerApp {
@@ -23,23 +23,23 @@ export class TaskManagerApp {
         return this.pluginsManager.initPluginScripts()
     }
 
-    getCampaigns = async (userID: string): Promise<CampaignList> => {
-        return this.httpClient.getCampaigns(userID);
+    getTasks = async (userID: string): Promise<TasksList> => {
+        return this.httpClient.getTasks(userID);
     }
 
-    goProcess = async (userID: string, task: Campaign) => {
+    goProcess = async (userID: string, task: Task) => {
         return this.taskProcessor.goProcess(userID, task);
     }
 
-    claimProcess = async (userID: string, task: Campaign) => {
+    claimProcess = async (userID: string, task: Task) => {
         return this.taskProcessor.claimProcess(userID, task);
     }
 
-    subscribe = (event: Events, callback: (task: Campaign) => void) => {
+    subscribe = (event: Events, callback: (task: Task) => void) => {
         this.eventRegister.subscribe(event, callback);
     }
 
-    unsubscribe = (event: Events, callback: (task: Campaign) => void) => {
+    unsubscribe = (event: Events, callback: (task: Task) => void) => {
         this.eventRegister.unsubscribe(event, callback);
     }
 }
