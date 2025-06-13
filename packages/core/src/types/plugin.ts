@@ -1,4 +1,4 @@
-import {Campaign} from "./campaign";
+import {Task} from "./task";
 
 export interface Plugin {
     id: number
@@ -10,4 +10,4 @@ export interface Plugin {
     scriptProcessEndpoint: string
 }
 
-export type PluginProcessMethod = (appKey: string, userID: string, campaign: Campaign) => Promise<void>;
+export type PluginProcessMethod = (appKey: string, userID: string, task: Task) => Promise<void>;
