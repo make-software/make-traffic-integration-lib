@@ -1,4 +1,4 @@
-import {Plugin, PluginProcessMethod} from "../types";
+import {PluginProcessMethod, Plugin} from "../types";
 import {HttpClient} from "./HttpClient";
 
 export class PluginsManager {
