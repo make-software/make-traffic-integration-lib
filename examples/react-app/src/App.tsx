@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Campaign, Events, TaskManagerApp} from "make-traffic-integration-core";
+import {Events, Task, TaskManagerApp} from "make-traffic-integration-core";
 import {TaskManagerProvider} from "make-traffic-integration-react-wrapper";
 
 const appConfig = {
@@ -10,12 +10,12 @@ const appConfig = {
 const makeTrafficApp = new TaskManagerApp(appConfig);
 
 // Custom Task Card Template
-const TaskCard = (campaign: Campaign, actions: { go: () => void; claim: () => void }) => (
-    <div className="task-card" key={campaign.task.id}>
+const TaskCard = (task: Task, actions: { go: () => void; claim: () => void }) => (
+    <div className="task-card" key={task.id}>
         <div className="card-body">
-            <h5 className="card-title">{campaign.task.name}</h5>
+            <h5 className="card-title">{task.name}</h5>
             <p className="card-text">
-                Earn {campaign.settings.rewards[0].value} {campaign.settings.rewards[0].type}
+                Earn {task.rewards[0].value} {task.rewards[0].type}
             </p>
             <button className="btn-go" onClick={actions.go}>Custom Go Button</button>
             <button className="btn-claim" onClick={actions.claim}>Custom Claim Button</button>
@@ -25,8 +25,8 @@ const TaskCard = (campaign: Campaign, actions: { go: () => void; claim: () => vo
 
 
 export const App = () => {
-    const onSuccess = (campaign: Campaign) => alert(`Successfully claimed task: ${campaign.task.name}`)
-    const onFail = (campaign: Campaign) => alert(`Failed to claim task: ${campaign.task.name}`)
+    const onSuccess = (task: Task) => alert(`Successfully claimed task: ${task.name}`)
+    const onFail = (task: Task) => alert(`Failed to claim task: ${task.name}`)
 
     useEffect(() => {
         makeTrafficApp.subscribe(Events.TaskClaimSucceed, onSuccess);
@@ -38,8 +38,9 @@ export const App = () => {
         }
     }, []);
 
+
 // Filter out completed tasks
-    const filterCampaigns = (campaign: Campaign) => campaign.isCompleted !== true;
+    const filterCampaigns = (task: Task) => task.userState.isRewarded !== true;
 
     return (
         <TaskManagerProvider
