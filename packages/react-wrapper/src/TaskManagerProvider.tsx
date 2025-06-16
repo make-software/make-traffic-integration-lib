@@ -1,8 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {DefaultTaskCard} from "./DefaultTaskTemplate";
 import {
-    Campaign,
-    CampaignList, Events,
+    Task,
     TaskManagerApp,
 } from "make-traffic-integration-core";
 
@@ -10,8 +9,8 @@ interface TaskManagerProviderProps {
     taskManagerApp: TaskManagerApp;
     userID: string;
     className?: string;
-    filterCampaigns?: (campaign: Campaign) => boolean;
-    template?: (campaign: Campaign, actions: { go: () => void; claim: () => void }) => React.ReactNode; // Updated template type
+    filterCampaigns?: (task: Task) => boolean;
+    template?: (task: Task, actions: { go: () => void; claim: () => void }) => React.ReactNode; // Updated template type
 }
 
 export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
@@ -23,13 +22,13 @@ export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
         template,
     }: TaskManagerProviderProps
 ) => {
-    const [campaigns, setCampaigns] = useState<CampaignList>([]);
+    const [campaigns, setCampaigns] = useState<Task[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
 
 
     const refreshTasks = () => {
-        taskManagerApp.getCampaigns(userID).then((campaignList: CampaignList) => {
-            setCampaigns(campaignList || []);
+        taskManagerApp.getTasks(userID).then((tasks: Task[]) => {
+            setCampaigns(tasks || []);
         });
     };
 
@@ -49,24 +48,24 @@ export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
 
     }, [isInitialized, userID]);
 
-    const handleGoProcess = async (campaign: Campaign) => {
-        return taskManagerApp.goProcess(userID, campaign);
+    const handleGoProcess = async (task: Task) => {
+        return taskManagerApp.goProcess(userID, task);
     };
 
-    const handleClaimProcess = async (campaign: Campaign) => {
-        return taskManagerApp.claimProcess(userID, campaign).then(() => {
+    const handleClaimProcess = async (task: Task) => {
+        return taskManagerApp.claimProcess(userID, task).then(() => {
             refreshTasks();
         })
     };
 
     return (
         <div className={className}>
-            {campaigns.filter(filterCampaigns ?? (() => true)).map((campaign: Campaign) => {
+            {campaigns.filter(filterCampaigns ?? (() => true)).map((task: Task) => {
                 const actions = {
-                    go: () => handleGoProcess(campaign),
-                    claim: () => handleClaimProcess(campaign),
+                    go: () => handleGoProcess(task),
+                    claim: () => handleClaimProcess(task),
                 };
-                return template ? template(campaign, actions) : DefaultTaskCard(campaign, actions);
+                return template ? template(task, actions) : DefaultTaskCard(task, actions);
             })}
         </div>
     );
