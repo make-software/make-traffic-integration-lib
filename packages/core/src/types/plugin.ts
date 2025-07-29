@@ -10,4 +10,4 @@ export interface Plugin {
     scriptProcessEndpoint: string
 }
 
-export type PluginProcessMethod = (appKey: string, userID: string, task: Task) => Promise<void>;
+export type PluginProcessMethod = (appKey: string, userID: string, task: Task) => Promise<object | void>;
