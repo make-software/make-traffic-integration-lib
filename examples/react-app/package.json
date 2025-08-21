@@ -4,8 +4,8 @@
     "start": "react-scripts start"
   },
   "dependencies": {
-    "make-traffic-integration-core": "0.0.19",
-    "make-traffic-integration-react-wrapper": "0.0.21",
+    "make-traffic-integration-core": "0.0.22",
+    "make-traffic-integration-react-wrapper": "0.0.23",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

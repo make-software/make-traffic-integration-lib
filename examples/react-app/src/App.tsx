@@ -40,7 +40,7 @@ export const App = () => {
 
 
 // Filter out completed tasks
-    const filterCampaigns = (task: Task) => task.userState.isRewarded !== true;
+    const filterTasks = (task: Task) => task.userState.isRewarded !== true;
 
     return (
         <TaskManagerProvider
@@ -48,7 +48,7 @@ export const App = () => {
             userID="user-123"
             template={TaskCard}
             className="flex flex-wrap gap-4 justify-center p-24" // Custom styling
-            filterCampaigns={filterCampaigns} // Custom filtering
+            filterTasks={filterTasks} // Custom filtering
         />
     );
 };

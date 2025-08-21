@@ -9,7 +9,7 @@ interface TaskManagerProviderProps {
     taskManagerApp: TaskManagerApp;
     userID: string;
     className?: string;
-    filterCampaigns?: (task: Task) => boolean;
+    filterTasks?: (task: Task) => boolean;
     template?: (task: Task, actions: { go: () => void; claim: () => void }) => React.ReactNode; // Updated template type
 }
 
@@ -18,17 +18,17 @@ export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
         taskManagerApp,
         userID,
         className,
-        filterCampaigns,
+        filterTasks,
         template,
     }: TaskManagerProviderProps
 ) => {
-    const [campaigns, setCampaigns] = useState<Task[]>([]);
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
 
 
     const refreshTasks = () => {
         taskManagerApp.getTasks(userID).then((tasks: Task[]) => {
-            setCampaigns(tasks || []);
+            setTasks(tasks || []);
         });
     };
 
@@ -41,7 +41,7 @@ export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
         });
     }, []);
 
-    // Fetch campaigns after initialization
+    // Fetch tasks after initialization
     useEffect(() => {
         if (!isInitialized) return;
         refreshTasks();
@@ -60,7 +60,7 @@ export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
 
     return (
         <div className={className}>
-            {campaigns.filter(filterCampaigns ?? (() => true)).map((task: Task) => {
+            {tasks.filter(filterTasks ?? (() => true)).map((task: Task) => {
                 const actions = {
                     go: () => handleGoProcess(task),
                     claim: () => handleClaimProcess(task),

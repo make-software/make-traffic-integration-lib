@@ -33,15 +33,17 @@ taskManager.init(); // Initialize the library
 ---
 
 ### Example
+
 ```typescript
-const onCampaignClaimed = (task: Campaign) => {
-    console.log('Campaign claimed:', task);
+
+const onTaskClaimed = (task: Task) => {
+  console.log('Task claimed:', task);
 };
 
-taskManager.subscribe(Events.CampaignClaimSucceed, onCampaignClaimed);
+taskManager.subscribe(Events.TaskClaimSucceed, onTaskClaimed);
 
-taskManager.getCampaigns('user123').then(campaigns => {
-    console.log('Campaigns:', campaigns);
+taskManager.getTasks('user123').then(tasks => {
+  console.log('Tampaigns:', tasks);
 });
 ```
 
@@ -65,9 +67,9 @@ const taskManagerApp = TaskManagerApp({
     appKey: "your-app-key",
 });
 
-const MyCustomTemplate = (campaign, actions) => (
+const MyCustomTemplate = (task, actions) => (
     <div>
-        <h3>{campaign.name}</h3>
+        <h3>{task.name}</h3>
         <button onClick={actions.go}>Go</button>
         <button onClick={actions.claim}>Claim</button>
     </div>
@@ -89,31 +91,31 @@ export default App;
 ### `async init(): Promise<void>`
 Initializes the task manager. Should be run once before using other methods.
 
-### `async getCampaigns(userID: string): Promise<CampaignList>`
-Fetches the list of campaigns available for the specified user.
+### `async getTasks(userID: string): Promise<TaskList>`
+Fetches the list of tasks available for the specified user.
 
-### `async goProcess(userID: string, task: Campaign): Promise<void>`
-Processes the specified campaign task.
+### `async goProcess(userID: string, task: Task): Promise<void>`
+Processes the specified task task.
 
-### `async claimProcess(userID: string, task: Campaign): Promise<void>`
-Claims the specified campaign task for the user.
+### `async claimProcess(userID: string, task: Task): Promise<void>`
+Claims the specified task for the user.
 
-### `subscribe(event: Events, callback: (task: Campaign) => void): void`
-Subscribes to a specific event related to campaign tasks.
+### `subscribe(event: Events, callback: (task: Task) => void): void`
+Subscribes to a specific event related to tasks.
 
-### `unsubscribe(event: Events, callback: (task: Campaign) => void): void`
+### `unsubscribe(event: Events, callback: (task: Task) => void): void`
 Unsubscribes from a previously subscribed event.
 
 ## Events
 
-### `Events.CampaignClaimSucceed`
-Triggered when a campaign is successfully claimed.
+### `Events.TaskClaimSucceed`
+Triggered when a task is successfully claimed.
 
-### `Events.CampaignClaimFailed`
-Triggered when claiming a campaign fails.
+### `Events.TaskClaimFailed`
+Triggered when claiming a task fails.
 
-### `Events.CampaignProcessed`
-Triggered when a campaign has been successfully processed.
+### `Events.TaskProcessed`
+Triggered when a task has been successfully processed.
 
 ## License
 MIT

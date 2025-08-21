@@ -1,6 +1,6 @@
 {
   "name": "make-traffic-integration-react-wrapper",
-  "version": "0.0.21",
+  "version": "0.0.23",
   "scripts": {
     "build": "webpack"
   },

@@ -14,7 +14,7 @@ export class HttpClient {
     getTasks = async (userID: string): Promise<TasksList> => {
         const response = await fetch(this.apiUrl + `/tasks?app_key=${this.appKey}&user_id=${userID}`);
         if (!response.ok) {
-            return Promise.reject(new HttpError(`Failed to get list of campaigns: ${response.statusText}`, response.status));
+            return Promise.reject(new HttpError(`Failed to get list of tasks: ${response.statusText}`, response.status));
         }
 
         return await response.json();

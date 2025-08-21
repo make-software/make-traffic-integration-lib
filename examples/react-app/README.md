@@ -36,9 +36,9 @@ const taskManagerApp = TaskManagerApp({
     appKey: "your-app-key",
 });
 
-const MyCustomTemplate = (campaign, actions) => (
+const MyCustomTemplate = (task, actions) => (
     <div>
-        <h3>{campaign.name}</h3>
+        <h3>{task.name}</h3>
         <button onClick={actions.go}>Go</button>
         <button onClick={actions.claim}>Claim</button>
     </div>
