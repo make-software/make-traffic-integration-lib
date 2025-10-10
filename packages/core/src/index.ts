@@ -1,6 +1,6 @@
 export * from "./types/index";
 import {Config} from "./types";
-import {HttpClient} from "./services/HttpClient";
+import {HttpClient, TaskFilters} from "./services/HttpClient";
 import {EventRegister} from "./services/EventRegister";
 import {TaskProcessor} from "./services/TaskProcessor";
 import {Task, TasksList, Events} from "./types";
@@ -23,8 +23,8 @@ export class TaskManagerApp {
         return this.pluginsManager.initPluginScripts()
     }
 
-    getTasks = async (userID: string): Promise<TasksList> => {
-        return this.httpClient.getTasks(userID);
+    getTasks = async (userID: string,  filters?: TaskFilters): Promise<TasksList> => {
+        return this.httpClient.getTasks(userID, filters);
     }
 
     goProcess = async (userID: string, task: Task) => {

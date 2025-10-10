@@ -31,4 +31,10 @@ export interface Task {
     userState: TaskUserState
 }
 
-export type TasksList = Task[]
+export interface PaginationResponseType<T> {
+    item_count: number;
+    page_count: number;
+    data: T[] | null;
+}
+
+export type TasksList = PaginationResponseType<Task>;

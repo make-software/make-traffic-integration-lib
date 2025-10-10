@@ -17,7 +17,14 @@ export class PluginsManager {
             return;
         }
 
-        this.userPlugins = await this.httpClient.getPlugins();
+        return this.httpClient.getPlugins().then(
+            (plugins) => {
+                this.userPlugins = plugins.data || [];
+            },
+            (error) => {
+                return Promise.reject(new Error(`Failed to load plugins: ${error.message}`));
+            }
+        )
     }
 
     initPluginScripts = async () => {
