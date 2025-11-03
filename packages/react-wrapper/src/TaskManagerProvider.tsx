@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect,  useState} from "react";
 import {DefaultTaskCard} from "./DefaultTaskTemplate";
 import {
     Task,
@@ -27,8 +27,8 @@ export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
 
 
     const refreshTasks = () => {
-        taskManagerApp.getTasks(userID).then((tasks: Task[]) => {
-            setTasks(tasks || []);
+        taskManagerApp.getTasks(userID).then((tasks) => {
+            setTasks(tasks.data || []);
         });
     };
 
