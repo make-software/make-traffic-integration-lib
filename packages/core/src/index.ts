@@ -54,4 +54,9 @@ export class TaskManagerApp {
     }
 }
 
-export const app = (cfg: Config) => new TaskManagerApp(cfg);
+export const NewTaskManager = async (cfg: Config) => {
+    const appInstance = new TaskManagerApp(cfg);
+    ;(window as any).globalTaskManager = appInstance;
+    await appInstance.init();
+    return appInstance;
+}
