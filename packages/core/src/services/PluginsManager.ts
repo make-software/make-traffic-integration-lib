@@ -119,7 +119,7 @@ export class PluginsManager {
             throw new Error(`Plugin ${id} is not found`);
         }
 
-        return plugin.scriptVerifyEndpoint != "" && plugin.scriptVerifyEndpoint != null;
+        return !!plugin.scriptVerifyEndpoint;
     }
 
     getVerifyEndpointByID = (id: number): PluginProcessMethod => {
