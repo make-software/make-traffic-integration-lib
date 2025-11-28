@@ -8,6 +8,7 @@ export interface Plugin {
     scriptClassname: string
     scriptInitEndpoint: string
     scriptProcessEndpoint: string
+    scriptVerifyEndpoint: string
 }
 
 export type PluginProcessMethod = (appKey: string, userID: string, task: Task) => Promise<object | void>;

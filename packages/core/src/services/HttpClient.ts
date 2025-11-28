@@ -73,8 +73,8 @@ export class HttpClient {
         }
     }
 
-    claimProcess = async (userID: string, task: Task) => {
-        const response = await fetch(`${this.apiUrl}/v1/action/claim?task_id=${task.id}&user_id=${userID}&app_key=${this.appKey}`)
+    claimProcess = async (appKey: string, userID: string, task: Task) => {
+        const response = await fetch(`${this.apiUrl}/v1/action/claim?task_id=${task.id}&user_id=${userID}&app_key=${appKey}`)
         if (!response.ok && response.status === 409) {
             try {
                 const json = await response.json();
