@@ -35,19 +35,19 @@ export class TaskManagerApp {
         return this.taskProcessor.claimProcess(userID, task);
     }
 
-    subscribe = async <K extends Events>(
+    subscribe = <K extends Events>(
       event: K, callback: (payload: EventPayloadMap[K]) => void
     ) => {
         this.eventRegister.subscribe(event, callback);
     }
 
-    unsubscribe = async <K extends Events>(
+    unsubscribe = <K extends Events>(
       event: K, callback: (payload: EventPayloadMap[K]) => void
     ) => {
         this.eventRegister.unsubscribe(event, callback);
     }
 
-    emit = async <K extends Events>(
+    emit = <K extends Events>(
       event: K, payload: EventPayloadMap[K]
     ) => {
         this.eventRegister.emit(event, payload);
