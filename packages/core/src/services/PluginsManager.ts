@@ -29,46 +29,71 @@ export class PluginsManager {
 
     initPluginScripts = async () => {
         if (this.isScriptsUploaded) {
-            return
+            return;
         }
 
-        await this.loadPlugins()
+        await this.loadPlugins();
 
-        const scriptLoadPromises: Promise<any>[] = [];
-        this.userPlugins.forEach(plugin => {
-            if (plugin.resources === undefined) {
-                plugin.resources = [];
-            }
-            plugin.resources.forEach(url => {
-                const script = document.createElement('script');
-                script.src = url;
-                script.async = true; // Load scripts asynchronously
-                document.head.appendChild(script);
+        const head = document.head;
 
-                // Create a promise that resolves when the script is loaded
-                const scriptLoadPromise = new Promise((resolve, reject) => {
-                    script.onload = resolve;
-                    script.onerror = () => reject(new Error(`Failed to load script: ${url}`));
-                });
+        const pluginPromises = this.userPlugins.map((plugin) => {
+            const resources = plugin.resources ?? [];
 
-                scriptLoadPromises.push(scriptLoadPromise);
+            // chain loads for this plugin
+            let chain = Promise.resolve();
+
+            resources.forEach((url) => {
+                chain = chain.then(
+                  () =>
+                    new Promise<void>((resolve, reject) => {
+                        let el: HTMLScriptElement | HTMLLinkElement;
+
+                        if (url.includes('.css')) {
+                            const link = document.createElement('link');
+                            link.rel = 'stylesheet';
+                            link.type = 'text/css';
+                            link.href = url;
+                            link.onload = () => resolve();
+                            link.onerror = () =>
+                              reject(new Error(`Failed to load stylesheet: ${url}`));
+                            el = link;
+                        } else {
+                            const script = document.createElement('script');
+                            script.src = url;
+                            // ❗ do NOT set script.async = true here
+                            script.onload = () => resolve();
+                            script.onerror = () =>
+                              reject(new Error(`Failed to load script: ${url}`));
+                            el = script;
+                        }
+
+                        head.appendChild(el);
+                    })
+                );
             });
+
+            // after this plugin's resources are loaded in order, init plugin class
+            chain = chain.then(() => {
+                const clsName = plugin.scriptClassname;
+                const Ctor = (window as any)[clsName];
+                if (!Ctor) {
+                    throw new Error(
+                      `Plugin ID: ${plugin.id} Name: ${plugin.name} class not found: ${clsName}`
+                    );
+                }
+
+                const instanceName = clsName + 'Instance';
+                (window as any)[instanceName] = new Ctor(this.appKey, this.apiUrl);
+
+                if (plugin.scriptInitEndpoint) {
+                    (window as any)[instanceName][plugin.scriptInitEndpoint]();
+                }
+            });
+
+            return chain;
         });
 
-        // Wait for all scripts to load
-        await Promise.all(scriptLoadPromises);
-
-        // Init scripts after all are loaded
-        this.userPlugins.forEach(plugin => {
-            if ((window as any)[plugin.scriptClassname]) {
-                (window as any)[plugin.scriptClassname + "Instance"] = new (window as any)[plugin.scriptClassname](this.appKey, this.apiUrl);
-            } else {
-                return Promise.reject(new Error(`Plugin ID: ${plugin.id} Name:${plugin.name} scriptClassname is not provided`))
-            }
-            if (plugin.scriptInitEndpoint !== undefined && plugin.scriptInitEndpoint !== '') {
-                (window as any)[plugin.scriptClassname + "Instance"][plugin.scriptInitEndpoint]();
-            }
-        });
+        await Promise.all(pluginPromises);
 
         this.isScriptsUploaded = true;
     };
@@ -86,5 +111,31 @@ export class PluginsManager {
 
 
         return (window as any)[plugin.scriptClassname + "Instance"][plugin.scriptProcessEndpoint]
+    }
+
+    hasVerifyEndpointByID = (id: number): boolean => {
+        const plugin = this.userPlugins.find(one => one.id === id);
+        if (!plugin) {
+            throw new Error(`Plugin ${id} is not found`);
+        }
+
+        return !!plugin.scriptVerifyEndpoint;
+    }
+
+    getVerifyEndpointByID = (id: number): PluginProcessMethod => {
+        const plugin = this.userPlugins.find(one => one.id === id);
+        if (!plugin) {
+            throw new Error(`Plugin ${id} is not found`);
+        }
+
+        if (!(window as any)[plugin.scriptClassname + "Instance"]) {
+            throw new Error(`Class ${plugin.scriptClassname + "Instance"} not found`);
+        }
+
+        if (plugin.scriptVerifyEndpoint == "" || plugin.scriptVerifyEndpoint == null) {
+            throw new Error(`Plugin ${id} does not have verify endpoint`);
+        }
+
+        return (window as any)[plugin.scriptClassname + "Instance"][plugin.scriptVerifyEndpoint]
     }
 }

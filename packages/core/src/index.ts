@@ -1,5 +1,5 @@
 export * from "./types/index";
-import {Config} from "./types";
+import {Config, EventPayloadMap} from "./types";
 import {HttpClient, TaskFilters} from "./services/HttpClient";
 import {EventRegister} from "./services/EventRegister";
 import {TaskProcessor} from "./services/TaskProcessor";
@@ -35,12 +35,22 @@ export class TaskManagerApp {
         return this.taskProcessor.claimProcess(userID, task);
     }
 
-    subscribe = (event: Events, callback: (task: Task) => void) => {
+    subscribe = <K extends Events>(
+      event: K, callback: (payload: EventPayloadMap[K]) => void
+    ) => {
         this.eventRegister.subscribe(event, callback);
     }
 
-    unsubscribe = (event: Events, callback: (task: Task) => void) => {
+    unsubscribe = <K extends Events>(
+      event: K, callback: (payload: EventPayloadMap[K]) => void
+    ) => {
         this.eventRegister.unsubscribe(event, callback);
+    }
+
+    emit = <K extends Events>(
+      event: K, payload: EventPayloadMap[K]
+    ) => {
+        this.eventRegister.emit(event, payload);
     }
 }
 
