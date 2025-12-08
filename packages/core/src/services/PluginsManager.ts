@@ -116,7 +116,7 @@ export class PluginsManager {
     hasVerifyEndpointByID = (id: number): boolean => {
         const plugin = this.userPlugins.find(one => one.id === id);
         if (!plugin) {
-            throw new Error(`Plugin ${id} is not found`);
+            return false;
         }
 
         return !!plugin.scriptVerifyEndpoint;

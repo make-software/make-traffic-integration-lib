@@ -1,4 +1,5 @@
 import {Task, TasksList, Plugin, PaginationResponseType} from "../types";
+import { version as LIB_VERSION } from '../../package.json';
 
 export class HttpError extends Error {
     constructor(message: string, public statusCode: number) {
@@ -22,12 +23,35 @@ export class HttpClient {
     constructor(private apiUrl: string, private appKey: string) {
     }
 
+    private buildUrl(path: string, extraParams?: Record<string, string>): string {
+        const params = new URLSearchParams();
+        params.set("app_key", this.appKey);
+
+        if (extraParams) {
+            for (const [key, value] of Object.entries(extraParams)) {
+                if (value !== undefined && value !== null) {
+                    params.set(key, value);
+                }
+            }
+        }
+
+        const query = params.toString();
+        return `${this.apiUrl}${path}${query ? `?${query}` : ""}`;
+    }
+
+    private async request(url: string, options: RequestInit = {}) {
+        const headers = new Headers(options.headers || {});
+        headers.set("X-App-JsLib-Version", LIB_VERSION);
+        return fetch(url, {
+            ...options,
+            headers,
+        });
+    }
+
     getTasks = async (userID: string, filters?: TaskFilters): Promise<TasksList> => {
         const params = new URLSearchParams();
-
-        // Required / legacy params
-        params.set("app_key", this.appKey);
         params.set("user_id", userID);
+        params.set("app_key", this.appKey);
 
         // ---- New filters (optional) ----
         // Legacy behavior: default to active-only when filters are not provided.
@@ -49,7 +73,7 @@ export class HttpClient {
         params.set("currentPage", String(filters?.page ?? 1));
 
         const url = `${this.apiUrl}/v1/tasks?${params.toString()}`;
-        const response = await fetch(url);
+        const response = await this.request(url);
         if (!response.ok) {
             return Promise.reject(new HttpError(`Failed to get list of tasks: ${response.statusText}`, response.status));
         }
@@ -58,7 +82,8 @@ export class HttpClient {
     }
 
     getPlugins = async (): Promise<PaginationResponseType<Plugin>> => {
-        const response = await fetch(this.apiUrl + '/v1/plugins?app_key=' + this.appKey);
+        const url = this.buildUrl("/v1/plugins");
+        const response = await this.request(url);
         if (!response.ok) {
             return Promise.reject(new HttpError(`Failed to get list of plugins: ${response.statusText}`, response.status));
         }
@@ -67,14 +92,23 @@ export class HttpClient {
     }
 
     trackEvent = async (event: string, taskID: string, userID: string) => {
-        const response = await fetch(`${this.apiUrl}/v1/track-task-action?action=${event}&task_id=${taskID}&user_id=${userID}`)
+        const url = this.buildUrl("/v1/track-task-action", {
+            action: event,
+            task_id: taskID,
+            user_id: userID,
+        });
+        const response = await this.request(url);
         if (!response.ok) {
             return Promise.reject(new HttpError(`Failed to track event: ${response.statusText}`, response.status));
         }
     }
 
     claimProcess = async (appKey: string, userID: string, task: Task) => {
-        const response = await fetch(`${this.apiUrl}/v1/action/claim?task_id=${task.id}&user_id=${userID}&app_key=${appKey}`)
+        const url = this.buildUrl("/v1/action/claim", {
+            task_id: task.id,
+            user_id: userID,
+        });
+        const response = await this.request(url);
         if (!response.ok && response.status === 409) {
             try {
                 const json = await response.json();
