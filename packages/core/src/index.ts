@@ -1,9 +1,8 @@
 export * from "./types/index";
-import {Config, EventPayloadMap} from "./types";
-import {HttpClient, TaskFilters} from "./services/HttpClient";
+import { HttpClient, TaskFilters} from "./services/HttpClient";
 import {EventRegister} from "./services/EventRegister";
 import {TaskProcessor} from "./services/TaskProcessor";
-import {Task, TasksList, Events} from "./types";
+import {Config, EventPayloadMap, Task, TasksList, Events, ProcessMethodOptions, ClaimOptions} from "./types";
 import {PluginsManager} from "./services/PluginsManager";
 
 export class TaskManagerApp {
@@ -27,12 +26,12 @@ export class TaskManagerApp {
         return this.httpClient.getTasks(userID, filters);
     }
 
-    goProcess = async (userID: string, task: Task) => {
-        return this.taskProcessor.goProcess(userID, task);
+    goProcess = async (userID: string, task: Task, options?: ProcessMethodOptions) => {
+        return this.taskProcessor.goProcess(userID, task, options);
     }
 
-    claimProcess = async (userID: string, task: Task) => {
-        return this.taskProcessor.claimProcess(userID, task);
+    claimProcess = async (userID: string, task: Task, options?: ClaimOptions) => {
+        return this.taskProcessor.claimProcess(userID, task, options);
     }
 
     subscribe = <K extends Events>(
