@@ -1,4 +1,5 @@
 import {Task} from "./task";
+import {ClaimOptions, ProcessMethodOptions} from './options';
 
 export interface Plugin {
     id: number
@@ -11,4 +12,5 @@ export interface Plugin {
     scriptVerifyEndpoint?: string
 }
 
-export type PluginProcessMethod = (appKey: string, userID: string, task: Task) => Promise<object | void>;
+export type PluginProcessMethod = (appKey: string, userID: string, task: Task, options?: ProcessMethodOptions) => Promise<object | void>;
+export type PluginVerifyMethod = (appKey: string, userID: string, task: Task, options?: ClaimOptions) => Promise<object | void>;

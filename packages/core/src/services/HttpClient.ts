@@ -1,4 +1,12 @@
-import {Task, TasksList, Plugin, PaginationResponseType} from "../types";
+import {
+    Task,
+    TasksList,
+    Plugin,
+    PaginationResponseType,
+    ClaimOptions,
+    DefaultAuthProvider,
+    TrackOptions
+} from "../types";
 import { version as LIB_VERSION } from '../../package.json';
 
 export class HttpError extends Error {
@@ -17,6 +25,7 @@ export interface TaskFilters {
     categories?: string[];                // e.g., ['default','partners']
     page?: number;
     pageSize?: number;
+    authProvider?: string;
 }
 
 export class HttpClient {
@@ -71,6 +80,7 @@ export class HttpClient {
         }
         params.set("pageSize", String(filters?.pageSize ?? 100));
         params.set("currentPage", String(filters?.page ?? 1));
+        params.set("auth_provider", filters?.authProvider || DefaultAuthProvider);
 
         const url = `${this.apiUrl}/v1/tasks?${params.toString()}`;
         const response = await this.request(url);
@@ -91,11 +101,12 @@ export class HttpClient {
         return await response.json();
     }
 
-    trackEvent = async (event: string, taskID: string, userID: string) => {
+    trackEvent = async (event: string, taskID: string, userID: string, options?: TrackOptions) => {
         const url = this.buildUrl("/v1/track-task-action", {
             action: event,
             task_id: taskID,
             user_id: userID,
+            auth_provider: options?.authProvider || DefaultAuthProvider,
         });
         const response = await this.request(url);
         if (!response.ok) {
@@ -103,10 +114,11 @@ export class HttpClient {
         }
     }
 
-    claimProcess = async (appKey: string, userID: string, task: Task) => {
+    claimProcess = async (appKey: string, userID: string, task: Task, options?: ClaimOptions) => {
         const url = this.buildUrl("/v1/action/claim", {
             task_id: task.id,
             user_id: userID,
+            auth_provider: options?.authProvider || DefaultAuthProvider,
         });
         const response = await this.request(url);
         if (!response.ok && response.status === 409) {

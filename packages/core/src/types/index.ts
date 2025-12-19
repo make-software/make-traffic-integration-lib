@@ -6,3 +6,4 @@ export * from "./plugins/custom";
 export * from "./plugins/redirect-timeout";
 export * from "./plugins/action-based";
 export * from "./plugins/interfaces";
+export * from "./options"
