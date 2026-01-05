@@ -1,5 +1,6 @@
-import {PluginProcessMethod, Plugin} from "../types";
+import {Plugin, PluginProcessMethod, PluginVerifyMethod} from "../types";
 import {HttpClient} from "./HttpClient";
+
 
 export class PluginsManager {
     private isScriptsUploaded = false;
@@ -122,7 +123,7 @@ export class PluginsManager {
         return !!plugin.scriptVerifyEndpoint;
     }
 
-    getVerifyEndpointByID = (id: number): PluginProcessMethod => {
+    getVerifyEndpointByID = (id: number): PluginVerifyMethod => {
         const plugin = this.userPlugins.find(one => one.id === id);
         if (!plugin) {
             throw new Error(`Plugin ${id} is not found`);

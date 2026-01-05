@@ -1,6 +1,6 @@
 {
   "name": "make-traffic-integration-core",
-  "version": "0.2.7",
+  "version": "0.3.4",
   "description": "Core Library for Make Traffic task manager",
   "scripts": {
     "build": "webpack"
@@ -8,7 +8,7 @@
   "exports": {
     ".": "./dist/bundle.esm.js"
   },
-  "types": "dist/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "type": "module",
   "files": [
     "dist/"
