@@ -1,0 +1,14 @@
+{
+  "name": "native-ts-example",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && cp index.html dist/",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "make-traffic-integration-core": "~0.3.6"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "native-js-example",
+  "type": "module",
+  "dependencies": {
+    "make-traffic-integration-core": "~0.3.6"
+  }
+}

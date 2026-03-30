@@ -49,7 +49,7 @@ export const DefaultTaskCard = (task: Task, actions: { go: () => void; claim: ()
                     <button
                         disabled={task.userState.isRewarded}
                         className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition mr-2"
-                        onClick={() => actions.go}
+                        onClick={() => actions.go()}
                     >
                         Go
                     </button>
@@ -57,7 +57,7 @@ export const DefaultTaskCard = (task: Task, actions: { go: () => void; claim: ()
                         <button
                             disabled={task.userState.isRewarded}
                             className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-                            onClick={() => actions.claim}
+                            onClick={() => actions.claim()}
                         >
                             Claim
                         </button>

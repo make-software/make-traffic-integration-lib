@@ -1,8 +1,17 @@
 export * from "./types/index";
-import { HttpClient, TaskFilters} from "./services/HttpClient";
+import { HttpClient } from "./services/HttpClient";
 import {EventRegister} from "./services/EventRegister";
 import {TaskProcessor} from "./services/TaskProcessor";
-import {Config, EventPayloadMap, Task, TasksList, Events, ProcessMethodOptions, ClaimOptions} from "./types";
+import {
+  Config,
+  EventPayloadMap,
+  Task,
+  TasksList,
+  Events,
+  ProcessMethodOptions,
+  ClaimOptions,
+  TaskFilters
+} from "./types";
 import {PluginsManager} from "./services/PluginsManager";
 
 export class TaskManagerApp {

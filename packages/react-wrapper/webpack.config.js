@@ -41,7 +41,8 @@ export default [
         mode: 'production',
         externals: {
             react: "react",
-            "react-dom": "react-dom"
+            "react-dom": "react-dom",
+            "make-traffic-integration-core": "make-traffic-integration-core",
         },
     },
 ];

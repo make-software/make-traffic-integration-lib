@@ -1,61 +1,72 @@
-import React, {useEffect,  useState} from "react";
-import {DefaultTaskCard} from "./DefaultTaskTemplate";
+import React, { useEffect, useState } from "react";
+import { DefaultTaskCard } from "./DefaultTaskTemplate";
 import {
     Task,
     TaskManagerApp,
+    TaskFilters
 } from "make-traffic-integration-core";
+
 
 interface TaskManagerProviderProps {
     taskManagerApp: TaskManagerApp;
     userID: string;
     className?: string;
+    /** Optional auth provider forwarded to goProcess / claimProcess. */
+    authProvider?: string;
+    /** Optional filters forwarded to getTasks. */
+    filters?: TaskFilters;
     filterTasks?: (task: Task) => boolean;
-    template?: (task: Task, actions: { go: () => void; claim: () => void }) => React.ReactNode; // Updated template type
+    onError?: (error: Error) => void;
+    template?: (task: Task, actions: { go: () => void; claim: () => void }) => React.ReactNode;
 }
 
-export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
-    {
-        taskManagerApp,
-        userID,
-        className,
-        filterTasks,
-        template,
-    }: TaskManagerProviderProps
-) => {
+export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = ({
+    taskManagerApp,
+    userID,
+    className,
+    authProvider,
+    filters,
+    filterTasks,
+    onError,
+    template,
+}: TaskManagerProviderProps) => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
 
-
     const refreshTasks = () => {
-        taskManagerApp.getTasks(userID).then((tasks) => {
-            setTasks(tasks.data || []);
+        taskManagerApp.getTasks(userID, filters).then((result) => {
+            setTasks(result.data || []);
+        }).catch((err: Error) => {
+            onError?.(err);
         });
     };
 
-    // Register event listeners and initialize task manager app
     useEffect(() => {
         taskManagerApp.init().then(() => {
             setIsInitialized(true);
-        }).catch((error) => {
-            console.error("Failed to initialize Task Manager App", error);
+        }).catch((err: Error) => {
+            onError?.(err);
         });
     }, []);
 
-    // Fetch tasks after initialization
     useEffect(() => {
         if (!isInitialized) return;
         refreshTasks();
-
     }, [isInitialized, userID]);
 
     const handleGoProcess = async (task: Task) => {
-        return taskManagerApp.goProcess(userID, task);
+        const options = authProvider ? { authProvider } : undefined;
+        return taskManagerApp.goProcess(userID, task, options);
     };
 
     const handleClaimProcess = async (task: Task) => {
-        return taskManagerApp.claimProcess(userID, task).then(() => {
+        const options = authProvider ? { authProvider } : undefined;
+        return taskManagerApp.claimProcess(userID, task, options).then(() => {
             refreshTasks();
-        })
+        }).catch((err: Error) => {
+            onError?.(err);
+            return Promise.reject(err);
+        });
     };
 
     return (
@@ -65,7 +76,9 @@ export const TaskManagerProvider: React.FC<TaskManagerProviderProps> = (
                     go: () => handleGoProcess(task),
                     claim: () => handleClaimProcess(task),
                 };
-                return template ? template(task, actions) : DefaultTaskCard(task, actions);
+                return template
+                    ? <React.Fragment key={task.id}>{template(task, actions)}</React.Fragment>
+                    : DefaultTaskCard(task, actions);
             })}
         </div>
     );

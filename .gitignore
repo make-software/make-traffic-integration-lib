@@ -1,14 +1,30 @@
 /tmp
 /out-tsc
 
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+
+# Package manager
 /.pnp
 .pnp.js
+package-lock.json
+yarn.lock
 
+# IDE
 .vscode/*
-
 .idea/*
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store

@@ -5,28 +5,11 @@ import {
     PaginationResponseType,
     ClaimOptions,
     DefaultAuthProvider,
-    TrackOptions
+    TrackOptions,
+    HttpError,
+    TaskFilters,
 } from "../types";
 import { version as LIB_VERSION } from '../../package.json';
-
-export class HttpError extends Error {
-    constructor(message: string, public statusCode: number) {
-        super(message);
-        this.name = 'HttpError';
-    }
-}
-
-export type EntityType = "task" | "deal" | "all";
-export interface TaskFilters {
-    /** Default keeps legacy behavior (active only). Use 'all' to not filter by active state. */
-    isActive?: boolean | "all";           // default: true (legacy)
-    entityType?: EntityType;              // default: 'all'
-    pluginIds?: number[];                 // e.g., [1,2,3]
-    categories?: string[];                // e.g., ['default','partners']
-    page?: number;
-    pageSize?: number;
-    authProvider?: string;
-}
 
 export class HttpClient {
     constructor(private apiUrl: string, private appKey: string) {
@@ -57,6 +40,15 @@ export class HttpClient {
         });
     }
 
+    private async extractErrorMessage(response: Response, fallback: string): Promise<string> {
+        try {
+            const json = await response.json();
+            return json?.error?.message || json?.message || fallback;
+        } catch {
+            return fallback;
+        }
+    }
+
     getTasks = async (userID: string, filters?: TaskFilters): Promise<TasksList> => {
         const params = new URLSearchParams();
         params.set("user_id", userID);
@@ -85,7 +77,8 @@ export class HttpClient {
         const url = `${this.apiUrl}/v1/tasks?${params.toString()}`;
         const response = await this.request(url);
         if (!response.ok) {
-            return Promise.reject(new HttpError(`Failed to get list of tasks: ${response.statusText}`, response.status));
+            const message = await this.extractErrorMessage(response, `Failed to get list of tasks: ${response.statusText}`);
+            return Promise.reject(new HttpError(message, response.status));
         }
 
         return await response.json();
@@ -95,7 +88,8 @@ export class HttpClient {
         const url = this.buildUrl("/v1/plugins");
         const response = await this.request(url);
         if (!response.ok) {
-            return Promise.reject(new HttpError(`Failed to get list of plugins: ${response.statusText}`, response.status));
+            const message = await this.extractErrorMessage(response, `Failed to get list of plugins: ${response.statusText}`);
+            return Promise.reject(new HttpError(message, response.status));
         }
 
         return await response.json();
@@ -110,7 +104,8 @@ export class HttpClient {
         });
         const response = await this.request(url);
         if (!response.ok) {
-            return Promise.reject(new HttpError(`Failed to track event: ${response.statusText}`, response.status));
+            const message = await this.extractErrorMessage(response, `Failed to track event: ${response.statusText}`);
+            return Promise.reject(new HttpError(message, response.status));
         }
     }
 
@@ -121,19 +116,9 @@ export class HttpClient {
             auth_provider: options?.authProvider || DefaultAuthProvider,
         });
         const response = await this.request(url);
-        if (!response.ok && response.status === 409) {
-            try {
-                const json = await response.json();
-                if (json && json.error.message) {
-                    return Promise.reject(new HttpError(json.error.message, response.status))
-                }
-            } catch (e) {
-                // Ignore JSON parse error
-            }
-            return Promise.reject(new HttpError(`Failed to process claim ${response.statusText}`, response.status))
-        }
         if (!response.ok) {
-            return Promise.reject(new HttpError(`Failed to process claim ${response.statusText}`, response.status))
+            const message = await this.extractErrorMessage(response, `Failed to process claim: ${response.statusText}`);
+            return Promise.reject(new HttpError(message, response.status));
         }
     }
 }

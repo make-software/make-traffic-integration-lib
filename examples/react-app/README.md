@@ -1,56 +1,88 @@
-# Make Traffic Integration React Example
+# React Example
 
-This example demonstrates how to use the [
-`make-traffic-integration-core`](https://www.npmjs.com/package/make-traffic-integration-core)
-and [`make-traffic-integration-react-wrapper`](https://www.npmjs.com/package/make-traffic-integration-react-wrapper)
-libraries in a React component.
+Demonstrates three levels of React integration, from minimal to production-ready.
+All examples share the same components in `src/components/`.
 
-Check the [React Example](./src/App.tsx) for the complete code.
-
-Run the example on localhost:
+## Install & Run
 
 ```bash
-git clone git@github.com:koltsov-iv/make-traffic-integration-lib.git
-
-cd make-traffic-integration-lib/examples/react-app
-
+cd examples/react-app
 npm install
-
-env PORT=3033 npm start
+PORT=3033 npm start
 ```
 
-Replace the PORT value with the desired port number from your Traffic source settings.
+Open `http://localhost:3033` in the browser.
 
-Replace the `<!--YourAppKey-->` placeholder in the `appConfig` object with your application key
-from [Make Traffic console](https://make-traffic-console.dev.make.services/).
+Replace `<!--YourAppKey-->` in the active example's config with your key from the [Make Traffic console](https://make-traffic-console.dev.make.services/).
 
-## Usage
+## Switching Examples
 
-```tsx
-import React from "react";
-import { TaskManagerProvider } from "make-traffic-integration-react-wrapper";
-import {TaskManagerApp} from "make-traffic-integration-core";
+Uncomment the import you want in [`src/index.tsx`](./src/index.tsx):
 
-const taskManagerApp = TaskManagerApp({
-    apiUrl: "https://api.example.com",
-    appKey: "your-app-key",
-});
+```ts
+// 1. Simple — TaskManagerProvider, no hooks, ~35 lines
+import App from "./examples/simple/App";
 
-const MyCustomTemplate = (task, actions) => (
-    <div>
-        <h3>{task.name}</h3>
-        <button onClick={actions.go}>Go</button>
-        <button onClick={actions.claim}>Claim</button>
-    </div>
-);
+// 2. Hook — useTaskManager, minimal hook usage, ~35 lines
+import App from "./examples/hook/App";
 
-const App = () => (
-    <TaskManagerProvider
-        taskManagerApp={taskManagerApp}
-        userID="user123"
-        template={MyCustomTemplate}
-    />
-);
+// 3. Full — hook + error handling + toasts + modal host
+import App from "./examples/full/App";
+import "./examples/full/config";  // remove for examples 1 & 2
+```
 
-export default App;
+---
+
+## Example 1 — Simple [`examples/simple/App.tsx`](./src/examples/simple/App.tsx)
+
+Uses `TaskManagerProvider`. Pass a `template` function and the provider handles everything else — init, fetching, go/claim actions.
+
+```
+TaskManagerProvider
+  ↳ template(task, { go, claim })   ← you render this
+```
+
+No state, no hooks, no event subscriptions needed.
+
+---
+
+## Example 2 — Hook [`examples/hook/App.tsx`](./src/examples/hook/App.tsx)
+
+Uses `useTaskManager`. Full control over rendering with `isLoading` and `error` states exposed. Same amount of code as the simple example.
+
+```
+useTaskManager → { tasks, isLoading, error, goProcess, claimProcess }
+```
+
+---
+
+## Example 3 — Full [`examples/full/App.tsx`](./src/examples/full/App.tsx)
+
+Production-ready setup. See the [Best Practices](../../README.md#best-practices) section in the main README for a detailed breakdown with links to the relevant code.
+
+**Features:**
+- Singleton manager initialised outside React ([`config.ts`](./src/examples/full/config.ts))
+- Explicit list refresh after go and claim actions
+- `TaskClaimSucceed` event subscription for reward notifications
+- Error surfacing with auto-dismiss toasts
+- `TaskClaimModalHost` for plugin-rendered UI (quiz tasks, surveys)
+- Shared components: `TaskRow`, `SkeletonRow`, `Toast`
+
+---
+
+## Project Structure
+
+```
+src/
+  index.tsx                   ← entry point — switch examples here
+  components/
+    TaskRow.tsx               ← task row: icon / name+rewards / action button
+    SkeletonRow.tsx           ← animated loading placeholder
+    Toast.tsx                 ← fixed top-centre notification pill
+  examples/
+    simple/App.tsx            ← TaskManagerProvider approach
+    hook/App.tsx              ← useTaskManager, minimal
+    full/
+      config.ts               ← credentials, singleton manager init
+      App.tsx                 ← full production example
 ```
